@@ -34,3 +34,18 @@
            (declare (ignore env))
            '(200 (:content-type "text/plain") ("Hello, Clack!")))
          :port port)))
+
+(defun heroku-toplevel ()
+  (when *handler*
+    (clack:stop *handler*))
+  
+  (setf *handler*
+        (clack:clackup
+         (lambda (env)
+           (declare (ignore env))
+           '(200 (:content-type "text/plain") ("Hello, Clack!")))
+         :port (parse-integer (getenv "PORT"))))
+  ;; (initialize-application :port (parse-integer (getenv "PORT")))
+  ;; (loop (sleep 600))
+  )
+
