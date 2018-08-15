@@ -22,21 +22,39 @@
 ;;   (setf *acceptor*
 ;;     (hunchentoot:start (make-instance 'hunchentoot:easy-acceptor :port port))))
 
-(defvar *handler* nil)
+
+;;;; Can work
+;; (defvar *handler* nil)
+
+;; (defun initialize-application (&key port)
+;;   (when *handler*
+;;     (clack:stop *handler*))
+  
+;;   (setf *handler*
+;;         (clack:clackup
+;;          (lambda (env)
+;;            (declare (ignore env))
+;;            '(200 (:content-type "text/plain") ("Hello, Clack!")))
+;;          :port port)))
+
+;; (defun heroku-toplevel ()
+;;   (initialize-application :port (parse-integer (getenv "PORT")))
+;;   (loop (sleep 600))
+;;   )
+
+(defvar *app* (make-instance 'ningle:<app>))
+
+(setf (ningle:route *app* "/")
+      "Welcome to ningle!")
+
+(setf (ningle:route *app* "/login" :method :POST)
+      #'(lambda (params)
+          (if (authorize (cdr (assoc "username" params :test #'string=))
+                         (cdr (assoc "password" params :test #'string=)))
+              "Authorized!"
+              "Failed...Try again.")))
+
+
 
 (defun initialize-application (&key port)
-  (when *handler*
-    (clack:stop *handler*))
-  
-  (setf *handler*
-        (clack:clackup
-         (lambda (env)
-           (declare (ignore env))
-           '(200 (:content-type "text/plain") ("Hello, Clack!")))
-         :port port)))
-
-(defun heroku-toplevel ()
-  (initialize-application :port (parse-integer (getenv "PORT")))
-  (loop (sleep 600))
-  )
-
+  (clack:clackup *app* :port port))

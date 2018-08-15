@@ -6,6 +6,7 @@
   :serial t
   :depends-on (#:hunchentoot
                #:cl-who
+               #:ningle
                
                #:clack
                #:clack-handler-hunchentoot
