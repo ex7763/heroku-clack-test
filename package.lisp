@@ -1,2 +1,2 @@
-(defpackage #:heroku-app-clozure-common-lisp
+(defpackage #:heroku-clack-test
   (:use #:cl))
